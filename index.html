@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Infernal Translator, now, you can actually read and write in infernal in Dongeons & Dragons.">
+		<meta name="keywords" content="rent, landlords, landlord" />
+		<title>Infernal Translator</title>
+	</head>
+	<body>
+		<h1>Infernal Translator</h1>
+		<form>
+			<label>
+				<h2>Text to translate</h2>
+				<textarea id="originalText" name="originalText" placeholder="Text to translate"></textarea>
+			</label>
+			<label>
+				<h2>Translation direction</h2>
+				<select id="direction" name="direction">
+					<option value="EtoI">English --> Infernal</option>
+					<option value="ItoE">Infernal --> English</option>
+				</select>
+			</label>
+			<button type="button" onclick="translateInfernal();">Translate</button>
+		</form>
+		<h2>Result</h2>
+		<p id="result"></p>
+		<script type="text/javascript">
+			function translateInfernal() {
+				var originalText = document.getElementById('originalText').value.trim();
+				var direction = document.getElementById('direction').value;
+				var regexApostrophe = /'/gm;
+				var regexApostropheBack = /[bBfFjJpPvVzZ]'/gm;
+				var regexQuote = /"/gm;
+				var regexVowel = /[aAeEiIoOuUyY]/gm;
+				var regexSpace = /\s/gm;
+				var lastStep = '';
+				if (direction === 'EtoI') {
+					var step1 = originalText.replace(regexApostrophe, '"');
+					var step2 = step1.replace(regexVowel, function(match) {
+						var str = String.fromCharCode(match.charCodeAt(0) + 1) + "'";
+						return str;
+					});
+					var step3 = step2.replace(regexSpace, function(match) {
+						var rand = Math.floor(Math.random() * 12);
+						switch (rand) {
+							case 0: return 'a';
+							case 1: return 'A';
+							case 2: return 'e';
+							case 3: return 'E';
+							case 4: return 'i';
+							case 5: return 'I';
+							case 6: return 'o';
+							case 7: return 'O';
+							case 8: return 'u';
+							case 9: return 'U';
+							case 10: return 'y';
+							case 11: return 'Y';
+						}
+						return 'a';
+					});
+					var i = 0;
+					while (i < step3.length) {
+						var rand = Math.floor(Math.random() * 8) + 2;
+						var start = i;
+						for (i; i < step3.length; i ++) {
+							if (i == rand + start) {
+								lastStep += ' ';
+								start = i;
+							}
+							lastStep += step3[i];
+						}
+					}
+				}
+				else {
+					var step1 = originalText.replace(regexSpace, '');
+					var step2 = step1.replace(regexVowel, ' ');
+					var step3 = step2.replace(regexApostropheBack, function(match) {
+						console.log(String.fromCharCode(match.charCodeAt(0)));
+						return String.fromCharCode(match.charCodeAt(0) - 1);
+					});
+					lastStep = step3.replace(regexQuote, "'");
+				}
+				var result = lastStep;
+				document.getElementById('result').innerHTML = result;
+			}
+		</script>
+	</body>
+</html>
